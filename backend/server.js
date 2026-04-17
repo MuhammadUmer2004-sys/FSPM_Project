@@ -13,9 +13,11 @@ app.use(express.json());
 // Replace process.env.MONGO_URI with your Atlas URI
 // Example: mongodb+srv://admin:<password>@cluster.mongodb.net/freelance-flow
 // ----------------------------------------------------
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/freelance-flow')
-  .then(() => console.log('✅ Connected to MongoDB Successfully'))
-  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
+require("dotenv").config();
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 
 // --- API ENDPOINTS ---
 
