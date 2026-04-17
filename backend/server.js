@@ -5,7 +5,23 @@ const cors = require('cors');
 const { Task, Bid } = require('./models');
 
 const app = express();
-app.use(cors());
+
+// Allow both local dev and Vercel production frontend
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:4173',
+  process.env.FRONTEND_URL // Set this on Render dashboard
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // ----------------------------------------------------
