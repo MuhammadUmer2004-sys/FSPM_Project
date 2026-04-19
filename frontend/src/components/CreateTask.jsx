@@ -21,6 +21,11 @@ export default function CreateTask({ user, onAdd }) {
   const [title, setTitle] = useState('');
   const [whyDev, setWhyDev] = useState('');
   const [whatDone, setWhatDone] = useState('');
+  const [whenDeadline, setWhenDeadline] = useState('');
+  const [whoResponsible, setWhoResponsible] = useState('');
+  const [whereLocated, setWhereLocated] = useState('');
+  const [howDone, setHowDone] = useState('');
+  const [howMuchRes, setHowMuchRes] = useState('');
   const [inScope, setInScope] = useState('');
   const [outOfScope, setOutOfScope] = useState('');
   const [numFeatures, setNumFeatures] = useState(3);
@@ -40,7 +45,7 @@ export default function CreateTask({ user, onAdd }) {
     const newTask = {
       id: `t-${Date.now()}`,
       title,
-      description: `[WHY] ${whyDev}\n\n[WHAT] ${whatDone}\n\n[IN-SCOPE]\n${inScope}\n\n[OUT-OF-SCOPE]\n${outOfScope}`,
+      description: `[WHY] ${whyDev}\n\n[WHAT] ${whatDone}\n\n[WHEN] ${whenDeadline}\n\n[WHO] ${whoResponsible}\n\n[WHERE] ${whereLocated}\n\n[HOW] ${howDone}\n\n[HOW MUCH] ${howMuchRes}\n\n[IN-SCOPE]\n${inScope}\n\n[OUT-OF-SCOPE]\n${outOfScope}`,
       budget: Number(budget),
       deadline,
       client_id: user.id,
@@ -73,11 +78,18 @@ export default function CreateTask({ user, onAdd }) {
         {/* Section 1: Title & W5HH */}
         <div style={panelStyle}>
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, var(--accent-primary), transparent)' }} />
-          <SectionLabel number="1" label="W5HH Definition" sublabel="Why is it needed? What will be built?" />
+          <SectionLabel number="1" label="W5HH Definition" sublabel="Standard Software Project Management principles" />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <input type="text" className="input-control" placeholder="Project title (e.g. React Performance Optimization)" value={title} onChange={e => setTitle(e.target.value)} required />
-            <textarea className="input-control" placeholder="WHY — Business justification. Why is this system needed?" value={whyDev} onChange={e => setWhyDev(e.target.value)} required style={{ minHeight: '72px' }} />
-            <textarea className="input-control" placeholder="WHAT — Deliverables. What will be built and handed over?" value={whatDone} onChange={e => setWhatDone(e.target.value)} required style={{ minHeight: '72px' }} />
+            <div className="grid md:grid-cols-2 gap-3">
+              <textarea className="input-control" placeholder="WHY — Business justification. Why is this system needed?" value={whyDev} onChange={e => setWhyDev(e.target.value)} required style={{ minHeight: '72px' }} />
+              <textarea className="input-control" placeholder="WHAT — Deliverables. What will be built and handed over?" value={whatDone} onChange={e => setWhatDone(e.target.value)} required style={{ minHeight: '72px' }} />
+              <textarea className="input-control" placeholder="WHEN — Milestones. When will it be accomplished?" value={whenDeadline} onChange={e => setWhenDeadline(e.target.value)} required style={{ minHeight: '72px' }} />
+              <textarea className="input-control" placeholder="WHO — Roles. Who is responsible for each function?" value={whoResponsible} onChange={e => setWhoResponsible(e.target.value)} required style={{ minHeight: '72px' }} />
+              <textarea className="input-control" placeholder="WHERE — Logistics. Where are they located physically?" value={whereLocated} onChange={e => setWhereLocated(e.target.value)} required style={{ minHeight: '72px' }} />
+              <textarea className="input-control" placeholder="HOW — Technical approach. How will the job be done?" value={howDone} onChange={e => setHowDone(e.target.value)} required style={{ minHeight: '72px' }} />
+            </div>
+            <textarea className="input-control" placeholder="HOW MUCH — Resource estimation. How much of each resource is needed?" value={howMuchRes} onChange={e => setHowMuchRes(e.target.value)} required style={{ minHeight: '72px' }} />
           </div>
         </div>
 
