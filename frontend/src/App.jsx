@@ -26,11 +26,17 @@ const initialBids = [
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [bids, setBids] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  
+  // Initialize tasks and bids from localStorage if available, otherwise use initial data
+  const [tasks, setTasks] = useState(() => {
+    const savedTasks = localStorage.getItem('freelanceFlowTasks');
+    return savedTasks ? JSON.parse(savedTasks) : initialTasks;
+  });
+  
+  const [bids, setBids] = useState(() => {
+    const savedBids = localStorage.getItem('freelanceFlowBids');
+    return savedBids ? JSON.parse(savedBids) : initialBids;
+  });
 
   // Load user from local storage
   useEffect(() => {
@@ -38,29 +44,16 @@ export default function App() {
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
-    fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      // Fetch Tasks
-      const tasksRes = await fetch(`${API_URL}/api/tasks`);
-      const tasksData = await tasksRes.json();
-      
-      // Fetch Bids (Assuming we want all bids for the dashboard stats)
-      // Since there is no "get all bids" endpoint, we fetch bids for each task 
-      // or we can just rely on the fact that when we visit a task details page we fetch them.
-      // For the dashboard, we'll try to fetch all bids if we had an endpoint.
-      // For now, let's just use the tasks we have.
-      setTasks(tasksData.length > 0 ? tasksData : initialTasks);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching data:", err);
-      setTasks(initialTasks); // Fallback to mock data
-      setLoading(false);
-    }
-  };
+  // Persist tasks and bids whenever they change
+  useEffect(() => {
+    localStorage.setItem('freelanceFlowTasks', JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem('freelanceFlowBids', JSON.stringify(bids));
+  }, [bids]);
 
   const loginUser = (userData) => {
     localStorage.setItem('freelanceFlowUser', JSON.stringify(userData));
@@ -72,35 +65,8 @@ export default function App() {
     setUser(null);
   };
 
-  const addTask = async (task) => {
-    try {
-      const res = await fetch(`${API_URL}/api/tasks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(task)
-      });
-      const newTask = await res.json();
-      setTasks(prev => [newTask, ...prev]);
-    } catch (err) {
-      console.error("Error adding task:", err);
-      setTasks(prev => [task, ...prev]); // Fallback to local update
-    }
-  };
-
-  const addBid = async (bid) => {
-    try {
-      const res = await fetch(`${API_URL}/api/bids`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bid)
-      });
-      const newBid = await res.json();
-      setBids(prev => [newBid, ...prev]);
-    } catch (err) {
-      console.error("Error adding bid:", err);
-      setBids(prev => [bid, ...prev]); // Fallback to local update
-    }
-  };
+  const addTask = (task) => setTasks([...tasks, task]);
+  const addBid = (bid) => setBids([...bids, bid]);
 
   return (
     <Router>

@@ -5,31 +5,11 @@ import { ArrowLeft, Send, CheckCircle, ShieldAlert, Clock, DollarSign, Layers, P
 export default function TaskDetails({ user, tasks, bids, onAddBid }) {
   const { taskId } = useParams();
   const navigate = useNavigate();
-  const task = tasks.find(t => (t._id || t.id) === taskId);
+  const task = tasks.find(t => t.id === taskId);
   
   const [amount, setAmount] = useState('');
   const [proposal, setProposal] = useState('');
   const [milestones, setMilestones] = useState([{ id: 1, title: '', amount: '' }]);
-  const [taskBids, setTaskBids] = useState([]);
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
-  useEffect(() => {
-    if (taskId) {
-      fetchBids();
-    }
-  }, [taskId]);
-
-  const fetchBids = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/tasks/${taskId}/bids`);
-      const data = await res.json();
-      setTaskBids(data);
-    } catch (err) {
-      console.error("Error fetching bids:", err);
-      setTaskBids(bids.filter(b => b.task_id === taskId)); // Fallback to prop
-    }
-  };
 
   if (!task) return <div className="p-8 text-center">Task not found</div>;
 
@@ -62,13 +42,12 @@ export default function TaskDetails({ user, tasks, bids, onAddBid }) {
       status: 'pending'
     };
     onAddBid(newBid);
-    fetchBids(); // Refresh local list
     navigate('/dashboard');
   };
 
   const isClient = user.role === 'client';
-  // const taskBids = bids.filter(b => b.task_id === taskId); // Replaced by local state
-  const myBid = taskBids.find(b => b.task_id === taskId && b.developer_id === user.id);
+  const taskBids = bids.filter(b => b.task_id === taskId);
+  const myBid = bids.find(b => b.task_id === taskId && b.developer_id === user.id);
 
   const panelStyle = {
     background: 'var(--bg-card)',
