@@ -11,7 +11,7 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     if (!name.trim()) return;
     const mockUser = {
-      id: `u-${Date.now()}`,
+      id: name.trim().toLowerCase().replace(/\s+/g, '-'), // Stable ID based on name
       name: name.trim(),
       role: role,
       avatar: null

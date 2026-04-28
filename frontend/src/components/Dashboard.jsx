@@ -146,10 +146,11 @@ export default function Dashboard({ user, tasks, bids }) {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
             {displayTasks.map(task => {
-              const taskBids = bids.filter(b => b.task_id === task.id);
-              const myBid = developerBids.find(b => b.task_id === task.id);
+              const taskId = task._id || task.id;
+              const taskBids = bids.filter(b => b.task_id === taskId);
+              const myBid = developerBids.find(b => b.task_id === taskId);
               return (
-                <div key={task.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div key={taskId} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', zIndex: 1 }}>
                     <span className={`badge ${task.status === 'open' ? 'badge-info' : 'badge-success'}`}>
                       {task.status}
@@ -185,7 +186,7 @@ export default function Dashboard({ user, tasks, bids }) {
                   </div>
 
                   <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)', position: 'relative', zIndex: 1 }}>
-                    <Link to={`/task/${task.id}`} className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', fontSize: '0.82rem' }}>
+                    <Link to={`/task/${taskId}`} className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', fontSize: '0.82rem' }}>
                       {isClient ? 'View Bids' : 'View & Bid'} <ArrowUpRight size={14} />
                     </Link>
                   </div>
