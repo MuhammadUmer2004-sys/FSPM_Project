@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, CheckCircle, ShieldAlert, Clock, DollarSign, Layers, Plus, Trash2 } from 'lucide-react';
 
-export default function TaskDetails({ user, tasks, bids, onAddBid }) {
+export default function TaskDetails({ user, tasks, bids, onAddBid, onUpdateBidStatus }) {
   const { taskId } = useParams();
   const navigate = useNavigate();
   const task = tasks.find(t => t.id === taskId);
@@ -200,12 +200,41 @@ export default function TaskDetails({ user, tasks, bids, onAddBid }) {
               <h3 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '1rem' }}>Received Bids</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {taskBids.map(b => (
-                  <div key={b.id} style={{ padding: '0.75rem', background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                  <div key={b.id} style={{ padding: '0.75rem', background: 'var(--bg-elevated)', border: `1px solid ${b.status === 'approved' ? 'rgba(34, 197, 94, 0.25)' : 'var(--border-subtle)'}`, borderRadius: 'var(--radius-md)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
                       <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>Dev #{b.developer_id.slice(-4)}</span>
                       <span style={{ color: 'var(--accent-success)', fontWeight: 700 }}>${b.amount}</span>
                     </div>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{b.proposal}</p>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '0.5rem' }}>{b.proposal}</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                        fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.03em',
+                        padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-full)',
+                        background: b.status === 'approved' ? 'var(--accent-success-dim)' : 'var(--accent-warning-dim)',
+                        color: b.status === 'approved' ? 'var(--accent-success)' : 'var(--accent-warning)',
+                        border: `1px solid ${b.status === 'approved' ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)'}`
+                      }}>
+                        {b.status === 'approved' ? <CheckCircle size={11} /> : <Clock size={11} />}
+                        {b.status}
+                      </span>
+                      {b.status === 'pending' && (
+                        <button
+                          onClick={() => onUpdateBidStatus(b.id, 'approved')}
+                          style={{
+                            background: 'linear-gradient(135deg, var(--accent-success), #16a34a)',
+                            color: '#fff', border: 'none', borderRadius: 'var(--radius-md)',
+                            padding: '0.35rem 0.75rem', fontSize: '0.72rem', fontWeight: 600,
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem',
+                            transition: 'all 200ms ease', boxShadow: '0 0 12px rgba(34,197,94,0.2)'
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(34,197,94,0.35)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 12px rgba(34,197,94,0.2)'; }}
+                        >
+                          <CheckCircle size={12} /> Approve
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

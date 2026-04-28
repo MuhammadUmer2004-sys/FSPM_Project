@@ -178,8 +178,13 @@ export default function Dashboard({ user, tasks, bids }) {
                       </div>
                     )}
                     {!isClient && myBid && (
-                      <div style={{ color: 'var(--accent-success)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.25rem' }}>
-                        <CheckCircle size={12} /> Bid: ${myBid.amount}
+                      <div style={{ 
+                        color: myBid.status === 'approved' ? 'var(--accent-success)' : 'var(--accent-warning)', 
+                        fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.25rem',
+                        fontSize: '0.75rem'
+                      }}>
+                        {myBid.status === 'approved' ? <CheckCircle size={12} /> : <Clock size={12} />}
+                        Bid: ${myBid.amount} ({myBid.status})
                       </div>
                     )}
                   </div>

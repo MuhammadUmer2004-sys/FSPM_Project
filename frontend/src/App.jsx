@@ -38,7 +38,19 @@ export default function App() {
     return savedBids ? JSON.parse(savedBids) : initialBids;
   });
 
-  // Load user from local storage
+  // Load bids from local storage
+  useEffect(() => {
+    const savedBids = localStorage.getItem("freelanceFlowBids");
+    if (savedBids) {
+      setBids(JSON.parse(savedBids));
+    }
+  }, []);
+
+  // Persist bids when they change
+  useEffect(() => {
+    localStorage.setItem("freelanceFlowBids", JSON.stringify(bids));
+  }, [bids]);
+
   useEffect(() => {
     const savedUser = localStorage.getItem('freelanceFlowUser');
     if (savedUser) {
@@ -67,6 +79,12 @@ export default function App() {
 
   const addTask = (task) => setTasks([...tasks, task]);
   const addBid = (bid) => setBids([...bids, bid]);
+  const updateBidStatus = (bidId, newStatus) => {
+    const updated = bids.map(b => b.id === bidId ? { ...b, status: newStatus } : b);
+    setBids(updated);
+    // Save updated bids to localStorage
+    localStorage.setItem("freelanceFlowBids", JSON.stringify(updated));
+  };
 
   return (
     <Router>
@@ -123,7 +141,7 @@ export default function App() {
               user?.role === 'client' ? <CreateTask user={user} onAdd={addTask} /> : <Navigate to="/dashboard" replace />
             } />
             <Route path="/task/:taskId" element={
-              user ? <TaskDetails user={user} tasks={tasks} bids={bids} onAddBid={addBid} /> : <Navigate to="/login" replace />
+              user ? <TaskDetails user={user} tasks={tasks} bids={bids} onAddBid={addBid} onUpdateBidStatus={updateBidStatus} /> : <Navigate to="/login" replace />
             } />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
